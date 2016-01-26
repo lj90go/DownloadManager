@@ -8,6 +8,11 @@ import android.util.Log;
 public class HttpControl 
 {
 
+	/**
+	 * Judege the url type:support range-type.
+	 * @param url 
+	 * @return true:support range-type.
+	 */
 	public static boolean JudgeUrlloadType(String url)
 	{
 		boolean isRange = false;

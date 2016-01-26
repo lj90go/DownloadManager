@@ -5,43 +5,51 @@ import java.util.List;
 
 import android.util.Log;
 
+/**
+ * To save the download infomation.
+ * Every ZyfdInfo maybe have serveral urls.
+ * @author jieluo
+ *
+ */
 public class ZyfdInfo extends ObjectInfo 
 {
-	private List<String> urls;
-	private String type;
-	private HashMap<String, Long> loadingInfo;
-	private boolean hasDownloaded = false;
-	public boolean isHasDownloaded() {
+	private List<String> urls; //url list .
+	private HashMap<String, Long> loadingInfo; //Url as key,downloaded size as value.
+	private boolean hasDownloaded = false; //if all urls has be downloaded,the value will be true;
+	
+	public boolean isHasDownloaded() 
+	{
 		return hasDownloaded;
 	}
-	public void setHasDownloaded(boolean hasDownloaded) {
+	public void setHasDownloaded(boolean hasDownloaded)
+	{
 		this.hasDownloaded = hasDownloaded;
 	}
-	public List<String> getUrls() {
+	public List<String> getUrls() 
+	{
 		
 		return urls;
 	}
-	public void setUrls(List<String> urls) {
+	public void setUrls(List<String> urls) 
+	{
 		this.urls = urls;
 	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	public HashMap<String, Long> getLoadingInfo() {
+	public HashMap<String, Long> getLoadingInfo() 
+	{
 		return loadingInfo;
 	}
-	public void setLoadingInfo(String url,long size) {
+	public void setLoadingInfo(String url,long size) 
+	{
 		if(loadingInfo==null)
 		{
 			loadingInfo = new HashMap<String, Long>();
 		}
 		loadingInfo.put(url, size);
 	}
+	
 	@Override
-	public String toString() {
+	public String toString() 
+	{
 		// TODO Auto-generated method stub
 		Log.e("zyfdinfo", downloadid+","+downloadsize+","+loadingInfo.toString());
 		return super.toString();

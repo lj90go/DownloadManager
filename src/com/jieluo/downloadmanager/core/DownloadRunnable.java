@@ -22,14 +22,14 @@ import android.util.Log;
  
 public class DownloadRunnable implements Runnable,HttpMonitor {
 
-	private String url;
-	private String localPath;
-	private String id;
-	private MonitorProgress monitor;//进度监控
-	private EndDownload endDownload;
-	public HashMap<String,ObjectInfo> downloadInfoList = new HashMap<String, ObjectInfo>();
-	private HttpDownload httpDownload;
-	private ZyfdInfo info;
+	private String url;            //the url for httpdownload.
+	private String localPath;      //the localpath for saving file.
+	private String id;             //the objectInfo id.
+	private MonitorProgress monitor;//monitor progress changes.
+	private EndDownload endDownload;//when all urls in the objectinfo are downloaded,it need be avoked.
+	public HashMap<String,ObjectInfo> downloadInfoList = new HashMap<String, ObjectInfo>(); //List for Objectinfo. key:objectinfo id, values:objectInfo.
+	private HttpDownload httpDownload;//httpdownload.
+	private ZyfdInfo info;           //the objectInfo which contains this url.
 	public DownloadRunnable(String url,String localpath,HashMap<String,ObjectInfo> downloadInfoList,String id,MonitorProgress monitor,EndDownload endDownload) 
 	{
 		this.url = url;

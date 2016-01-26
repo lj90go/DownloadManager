@@ -16,14 +16,14 @@ import android.util.Log;
 public class DownloadAsync extends AsyncTask<String, Integer, String> implements HttpMonitor
 {
 
-	private HashMap<String,ObjectInfo> downloadInfoList = new HashMap<String, ObjectInfo>();
-	private MonitorProgress monitor;
-	private ZyfdInfo info;
-	private String id;
-	private HttpDownload httpDownload;
-	private EndDownload endDownload;
-	private String url;
-	private String localpath;
+	private HashMap<String,ObjectInfo> downloadInfoList = new HashMap<String, ObjectInfo>();  //the list save file info. key:id,value:ObjectInfo
+	private MonitorProgress monitor; //Monitor progress modify.
+	private ZyfdInfo info;           //the ObjectInfo which contains the files info.
+	private String id;				 //the objectInfo id.
+	private HttpDownload httpDownload;//download files.
+	private EndDownload endDownload;  //when objectInfo is downloaded, it need be avoked.
+	private String url;              //the url for httpdownload.
+	private String localpath;        //the localpath for save file.
 	public DownloadAsync(MonitorProgress monitor,HashMap<String,ObjectInfo> downloadInfoList,EndDownload enddownload,String id,String url,String localPath) 
 	{
 		this.monitor = monitor;
@@ -150,7 +150,7 @@ public class DownloadAsync extends AsyncTask<String, Integer, String> implements
 				}
 			}
 		}
-		Log.e("download", alldownloaded+"");
+//		Log.e("download", alldownloaded+"");
 		if(alldownloaded)
 		{
 			info.setHasDownloaded(true);

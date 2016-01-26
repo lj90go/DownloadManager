@@ -12,9 +12,22 @@ import com.jieluo.downloadmanager.core.DownloadRunnable.EndDownload;
 
 import android.util.Log;
 
+/**
+ * To download files,Monitor the progress.
+ * 
+ * @author edutech
+ *
+ */
 public class HttpDownload 
 {
-	private boolean paused = false;
+	private boolean paused = false;  //pause download.
+	/**
+	 * Download single file.
+	 * @param url      the url wil be download.
+	 * @param monitor  to monitor the progress.
+	 * @param isRange  support the range-type(true or false)
+	 * @param filepath the localpath for save.
+	 */
 	public void Httpdown_single(String url,HttpMonitor monitor,boolean isRange,String filepath)
 	{
 		InputStream in = null;
