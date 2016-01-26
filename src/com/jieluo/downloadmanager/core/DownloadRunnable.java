@@ -10,7 +10,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.jieluo.downloadmanager.http.HttpControl;
 import com.jieluo.downloadmanager.http.HttpDownload;
@@ -69,11 +71,6 @@ public class DownloadRunnable implements Runnable,HttpMonitor {
 		{
 			httpDownload.Httpdown_single(url, this, isRange, filepath);
 		}
-
-//		if(info.getAllSize()==info.getDownloadsize())
-//		{
-//			endDownload.endDownload(id);
-//		}
 	}
 
 	
@@ -86,6 +83,7 @@ public class DownloadRunnable implements Runnable,HttpMonitor {
 		// TODO Auto-generated method stub
 		info.setLoadingInfo(url, downloadsize);
 		info.setDownloadsize(info.getDownloadsize()+downloadsize);
+		info.setHasDownloaded(false);
 		info.setAllSize(info.getAllSize()+downloadsize+extrasize);
 		synchronized (downloadInfoList) {
 			downloadInfoList.put(id, info);
@@ -102,5 +100,48 @@ public class DownloadRunnable implements Runnable,HttpMonitor {
 			downloadInfoList.put(id, info);
 		}
 		monitor.loadingProgress(info);
+	}
+
+	@Override
+	public void overDownload(String url) {
+
+		// TODO Auto-generated method stub
+		info.setLoadingInfo(url, 1);
+		List<String> urls = info.getUrls();
+		HashMap<String,Long> maps = info.getLoadingInfo();
+
+		boolean alldownloaded = true;
+		if(urls!=null&&urls.size()>0)
+		{
+			for(int i=0;i<urls.size();i++)
+			{
+				String u = urls.get(i);
+				if(maps==null&&maps.size()<0)
+				{
+					alldownloaded = false;
+				}else if(maps.containsKey(u))
+				{
+					long download = maps.get(u);
+					if(download!=1)
+					{
+						alldownloaded = false;
+						break;
+					}
+				}else
+				{
+					alldownloaded = false;
+					break;
+				}
+			}
+		}
+		if(alldownloaded)
+		{
+			info.setHasDownloaded(true);
+			endDownload.endDownload(id);
+		}
+		synchronized (downloadInfoList) {
+			downloadInfoList.put(id, info);
+		}
+	
 	}
 }

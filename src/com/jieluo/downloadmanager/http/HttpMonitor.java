@@ -4,4 +4,5 @@ public interface HttpMonitor
 {
 	public void initTotal(String url,long downloadsize,long extrasize);
 	public void updateDownload(String url,long downloadsize,long byteslength);
+	public void overDownload(String url);
 }

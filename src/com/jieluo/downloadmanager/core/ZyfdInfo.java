@@ -10,6 +10,13 @@ public class ZyfdInfo extends ObjectInfo
 	private List<String> urls;
 	private String type;
 	private HashMap<String, Long> loadingInfo;
+	private boolean hasDownloaded = false;
+	public boolean isHasDownloaded() {
+		return hasDownloaded;
+	}
+	public void setHasDownloaded(boolean hasDownloaded) {
+		this.hasDownloaded = hasDownloaded;
+	}
 	public List<String> getUrls() {
 		
 		return urls;

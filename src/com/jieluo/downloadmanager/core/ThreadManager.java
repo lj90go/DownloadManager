@@ -3,6 +3,7 @@ package com.jieluo.downloadmanager.core;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -24,7 +25,7 @@ public class ThreadManager implements DownloadManager,EndDownload
 
 	private ThreadPoolExecutor mainExcutor; //主线程池
 	private HashMap<String,List<DownloadRunnable>> allRunnables;//进程集合
-	private HashMap<String,List<String>> allUrls;//下载链接集合
+	private HashMap<String,List<String>> waitingUrls;//下载链接集合
 	public HashMap<String,ObjectInfo> downloadInfoList = new HashMap<String, ObjectInfo>();//保存下载记录
 	public HashMap<String,MonitorProgress> progressList = new HashMap<String, MonitorProgress>();//监控下载进度
 	public ThreadManager(int maxThreadNumber) 
@@ -40,9 +41,9 @@ public class ThreadManager implements DownloadManager,EndDownload
 		{
 			allRunnables = new HashMap<String, List<DownloadRunnable>>();
 		}
-		if(allUrls==null)
+		if(waitingUrls==null)
 		{
-			allUrls = new HashMap<String, List<String>>();		
+			waitingUrls = new HashMap<String, List<String>>();		
 		}
 		
 	}
@@ -54,9 +55,9 @@ public class ThreadManager implements DownloadManager,EndDownload
 		{
 			allRunnables = new HashMap<String, List<DownloadRunnable>>();
 		}
-		if(allUrls==null)
+		if(waitingUrls==null)
 		{
-			allUrls = new HashMap<String, List<String>>();
+			waitingUrls = new HashMap<String, List<String>>();
 		}
 		if(downloadInfoList==null)
 		{
@@ -66,10 +67,7 @@ public class ThreadManager implements DownloadManager,EndDownload
 		{
 			progressList = new HashMap<String, MonitorProgress>();
 		}
-		synchronized (allUrls) 
-		{
-			allUrls.put(id, urls);
-		}
+		
 		synchronized (downloadInfoList) 
 		{
 			ZyfdInfo info = new ZyfdInfo();
@@ -80,14 +78,28 @@ public class ThreadManager implements DownloadManager,EndDownload
 		synchronized (progressList) {
 			progressList.put(id, monitor);
 		};
-		List<DownloadRunnable> runnableList = new ArrayList<DownloadRunnable>();
-		for(int i=0;i<urls.size();i++)
+		synchronized (allRunnables) 
 		{
-			DownloadRunnable runnable = new DownloadRunnable(urls.get(i),localpath,downloadInfoList,id,monitor,this);
-			runnableList.add(runnable);
-			mainExcutor.execute(runnable);
+			List<DownloadRunnable> runnableList = new ArrayList<DownloadRunnable>();
+			for(int i=0;i<urls.size();i++)
+			{
+				DownloadRunnable runnable = new DownloadRunnable(urls.get(i),localpath,downloadInfoList,id,monitor,this);
+				runnableList.add(runnable);
+				if(allRunnables.size()<=5)
+				{
+					mainExcutor.execute(runnable);
+				}else
+				{
+					synchronized (waitingUrls) 
+					{
+						waitingUrls.put(id, urls);
+					}
+				}
+			}
+			allRunnables.put(id, runnableList);
+			
 		}
-		allRunnables.put(id, runnableList);
+		
 	}
 
 	@Override
@@ -97,30 +109,22 @@ public class ThreadManager implements DownloadManager,EndDownload
 		List<DownloadRunnable> runnables = allRunnables.get(id);
 		if(mainExcutor!=null&&!mainExcutor.isShutdown()&&!mainExcutor.isTerminating()&&runnables!=null&&runnables.size()>0)
 		{
-			Log.e("runnable", "96");
 			for(int i=0;i<runnables.size();i++)
 			{
 				DownloadRunnable runable = runnables.get(i);
 				if(mainExcutor.getQueue().contains(runable))
 				{
 					mainExcutor.remove(runable);
-					Log.e("runnable", "remove");
 				}
 				if(runable!=null)
 				{
 					runable.setPauseState(true);
-					Log.e("runnable", "state 0");
 				}
 			}
 			synchronized (allRunnables) 
 			{
 				allRunnables.remove(id);
 				Log.e("runnable", "remove runnables");
-			}
-			synchronized (allUrls) 
-			{
-				allUrls.remove(id);
-				Log.e("runnable", "remove urls");
 			}
 			synchronized (downloadInfoList) 
 			{
@@ -129,6 +133,35 @@ public class ThreadManager implements DownloadManager,EndDownload
 			synchronized (progressList) 
 			{
 				progressList.remove(id);
+			}
+			synchronized (waitingUrls)
+			{
+				if(waitingUrls!=null&&waitingUrls.size()>0)
+				{
+					Set<String> keys = waitingUrls.keySet();
+					if(keys!=null&&keys.size()>0)
+					{
+						String key = keys.iterator().next();
+						if(key!=null)
+						{
+							synchronized (allRunnables) 
+							{
+								
+									List<DownloadRunnable> runnableList = allRunnables.get(key);
+									if(runnableList!=null&&runnableList.size()>0)
+									{
+										for(int i=0;i<runnableList.size();i++)
+										{
+											DownloadRunnable runnable = runnableList.get(i);
+											mainExcutor.execute(runnable);
+										}
+									}
+									waitingUrls.remove(key);
+								
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -149,18 +182,18 @@ public class ThreadManager implements DownloadManager,EndDownload
 				allRunnables = null;
 			}
 		}
-		synchronized (allUrls) {
-			if(allUrls!=null)
-			{
-				allUrls.clear();
-				allUrls = null;
-			}
-		}
 		synchronized (downloadInfoList) {
 			if(downloadInfoList!=null)
 			{
 				downloadInfoList.clear();
 				downloadInfoList = null;
+			}
+		}
+		synchronized (waitingUrls) {
+			if(waitingUrls!=null)
+			{
+				waitingUrls.clear();
+				waitingUrls = null;
 			}
 		}
 		synchronized (progressList) {
@@ -175,10 +208,10 @@ public class ThreadManager implements DownloadManager,EndDownload
 	@Override
 	public void endDownload(String id) {
 		// TODO Auto-generated method stub
+		Log.e("download", "enddownload:"+id+","+waitingUrls.size()+","+allRunnables.size());
 		List<DownloadRunnable> runnables = allRunnables.get(id);
 		if(mainExcutor!=null&&!mainExcutor.isShutdown()&&!mainExcutor.isTerminating()&&runnables!=null&&runnables.size()>0)
 		{
-			Log.e("runnable", "96");
 			for(int i=0;i<runnables.size();i++)
 			{
 				DownloadRunnable runable = runnables.get(i);
@@ -196,12 +229,6 @@ public class ThreadManager implements DownloadManager,EndDownload
 			synchronized (allRunnables) 
 			{
 				allRunnables.remove(id);
-				Log.e("runnable", "remove runnables");
-			}
-			synchronized (allUrls) 
-			{
-				allUrls.remove(id);
-				Log.e("runnable", "remove urls");
 			}
 			synchronized (downloadInfoList) 
 			{
@@ -210,6 +237,35 @@ public class ThreadManager implements DownloadManager,EndDownload
 			synchronized (progressList) 
 			{
 				progressList.remove(id);
+			}
+			synchronized (waitingUrls)
+			{
+				if(waitingUrls!=null&&waitingUrls.size()>0)
+				{
+					Set<String> keys = waitingUrls.keySet();
+					if(keys!=null&&keys.size()>0)
+					{
+						String key = keys.iterator().next();
+						if(key!=null)
+						{
+							synchronized (allRunnables) 
+							{
+								
+									List<DownloadRunnable> runnableList = allRunnables.get(key);
+									if(runnableList!=null&&runnableList.size()>0)
+									{
+										for(int i=0;i<runnableList.size();i++)
+										{
+											DownloadRunnable runnable = runnableList.get(i);
+											mainExcutor.execute(runnable);
+										}
+									}
+									waitingUrls.remove(key);
+								
+							}
+						}
+					}
+				}
 			}
 		}
 	}

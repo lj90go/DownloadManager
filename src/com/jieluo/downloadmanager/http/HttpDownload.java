@@ -8,6 +8,8 @@ import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import com.jieluo.downloadmanager.core.DownloadRunnable.EndDownload;
+
 import android.util.Log;
 
 public class HttpDownload 
@@ -22,7 +24,7 @@ public class HttpDownload
 		try {
 			urlconn = new URL(url);
 			conn = (HttpURLConnection) urlconn.openConnection();		
-			Log.e("download", url+","+isRange+","+filepath);
+//			Log.e("download", url+","+isRange+","+filepath);
 			File file = new File(filepath);
 			 if(isRange)
 			{
@@ -44,7 +46,7 @@ public class HttpDownload
 						+ size + "-");
 				RandomAccessFile randomFile = new RandomAccessFile(file, "rw");
 				randomFile.seek(size);
-				Log.e("download", size+","+conn.getContentLength()+","+conn.getResponseCode());
+//				Log.e("download", size+","+conn.getContentLength()+","+conn.getResponseCode());
 				downloadSize = size;		
 				int extraLength = conn.getContentLength();
 				boolean boo = false;
@@ -70,6 +72,11 @@ public class HttpDownload
 					}
 					monitor.updateDownload(url, downloadSize, length);
 
+				}
+//				Log.e("download", url+","+file.length()+","+(downloadSize+extraLength));
+				if(file.length()>=(extraLength+downloadSize))
+				{
+					monitor.overDownload(url);
 				}
 				randomFile.close();
 			}else
@@ -107,7 +114,11 @@ public class HttpDownload
 				{
 					out.close();
 				}
-				
+//				Log.e("download", url+","+file.length()+","+downloadSize);
+				if(file.length()>=(downloadSize))
+				{
+					monitor.overDownload(url);
+				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
