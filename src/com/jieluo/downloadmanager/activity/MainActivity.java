@@ -17,6 +17,7 @@ import com.jieluo.downloadmanager.core.ThreadManager;
 import com.jieluo.downloadmanager.core.ZyfdInfo;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -51,11 +52,14 @@ public class MainActivity extends Activity implements MonitorProgress {
     private Button threadBtn;
     private Button asyncBtn;
     private int downloadType = 0;
+    private long previousTime = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 //        DownloadManager dm = new ThreadManager(10);
+        File file = new File(path);
+        file.mkdir();
         File file0 = new File(path+"10/");
         file0.mkdir();
         File file1 = new File(path+"11/");
@@ -80,6 +84,8 @@ public class MainActivity extends Activity implements MonitorProgress {
         file10.mkdir();
         File file11 = new File(path+"21/");
         file11.mkdir();
+        map = new HashMap<String,ZyfdInfo>();
+    	listInfo = new ArrayList<String>();
         listview = (ListView) findViewById(R.id.list);
         adapter = new ListAdapter();
         listview.setAdapter(adapter);
@@ -129,14 +135,15 @@ public class MainActivity extends Activity implements MonitorProgress {
 				}
 			}
 		});
+        previousTime = System.currentTimeMillis();
     }
     private void ThreadPool_download()
     {
     	dm = new ThreadManager(20);
-    	map = new HashMap<String,ZyfdInfo>();
-    	listInfo = new ArrayList<String>();
+//    	map = new HashMap<String,ZyfdInfo>();
+//    	listInfo = new ArrayList<String>();
     	urls = new ArrayList<String>();
-        urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
+        urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56cbbcd67cb0900b221c26a6.json");
         urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
         urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
         urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
@@ -184,54 +191,54 @@ public class MainActivity extends Activity implements MonitorProgress {
         map.put("13", new ZyfdInfo());
         map.put("14", new ZyfdInfo());
         map.put("15", new ZyfdInfo());
-        urls = new ArrayList<String>();
-        urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
-        urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
-        urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
-        urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
-        dm.addDownload("16", urls, path+"16/",this);
-        
-        urls = new ArrayList<String>();
-        urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
-        urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
-        urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
-        urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
-        dm.addDownload("17", urls, path+"17/",this);
-        urls = new ArrayList<String>();
-        urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
-        urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
-        urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
-        dm.addDownload("18", urls, path+"18/",this);
-        listInfo.add("16");
-        listInfo.add("17"); 
-        listInfo.add("18");
-        map.put("16", new ZyfdInfo());
-        map.put("17", new ZyfdInfo());
-        map.put("18", new ZyfdInfo());
-        
-        urls = new ArrayList<String>();
-        urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
-        urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
-        urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
-        dm.addDownload("19", urls, path+"19/",this);
-        
-        urls = new ArrayList<String>();
-        urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
-        urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
-        urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
-        urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
-        dm.addDownload("20", urls, path+"20/",this);
-        urls = new ArrayList<String>();
-        urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
-        urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
-        urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
-        dm.addDownload("21", urls, path+"21/",this);
-        listInfo.add("19");
-        listInfo.add("20");
-        listInfo.add("21");
-        map.put("19", new ZyfdInfo());
-        map.put("20", new ZyfdInfo());
-        map.put("21", new ZyfdInfo());
+//        urls = new ArrayList<String>();
+//        urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
+//        urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
+//        urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
+//        urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
+//        dm.addDownload("16", urls, path+"16/",this);
+//        
+//        urls = new ArrayList<String>();
+//        urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
+//        urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
+//        urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
+//        urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
+//        dm.addDownload("17", urls, path+"17/",this);
+//        urls = new ArrayList<String>();
+//        urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
+//        urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
+//        urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
+//        dm.addDownload("18", urls, path+"18/",this);
+//        listInfo.add("16");
+//        listInfo.add("17"); 
+//        listInfo.add("18");
+//        map.put("16", new ZyfdInfo());
+//        map.put("17", new ZyfdInfo());
+//        map.put("18", new ZyfdInfo());
+//        
+//        urls = new ArrayList<String>();
+//        urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
+//        urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
+//        urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
+//        dm.addDownload("19", urls, path+"19/",this);
+//        
+//        urls = new ArrayList<String>();
+//        urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
+//        urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
+//        urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
+//        urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
+//        dm.addDownload("20", urls, path+"20/",this);
+//        urls = new ArrayList<String>();
+//        urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
+//        urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
+//        urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
+//        dm.addDownload("21", urls, path+"21/",this);
+//        listInfo.add("19");
+//        listInfo.add("20");
+//        listInfo.add("21");
+//        map.put("19", new ZyfdInfo());
+//        map.put("20", new ZyfdInfo());
+//        map.put("21", new ZyfdInfo());
          if(adapter!=null)
          {
         	 adapter.notifyDataSetChanged();
@@ -240,57 +247,57 @@ public class MainActivity extends Activity implements MonitorProgress {
     private void AsyncControl_download()
     {
     	dm = new AsyncTaskManager();
-    	map = new HashMap<String,ZyfdInfo>();
-    	listInfo = new ArrayList<String>();
-    	 urls = new ArrayList<String>();
-         urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
-         urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
-         urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
-         urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
-         dm.addDownload("10", urls, path+"10/",this);
-         
-         urls = new ArrayList<String>();
-         urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
-         urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
-         urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
-         urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
-         dm.addDownload("11", urls, path+"11/",this);
-         urls = new ArrayList<String>();
-         urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
-         urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
-         urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
-         urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
-         dm.addDownload("12", urls, path+"12/",this);
-         urls = new ArrayList<String>();
-         urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
-         urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
-         urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
-         urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
-         dm.addDownload("13", urls, path+"13/",this);
-         
-         urls = new ArrayList<String>();
-         urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
-         urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
-         urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
-         urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
-         dm.addDownload("14", urls, path+"14/",this);
-         urls = new ArrayList<String>();
-         urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
-         urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
-         urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
-         dm.addDownload("15", urls, path+"15/",this);
-         listInfo.add("10");
-         listInfo.add("11");
-         listInfo.add("12");
-         map.put("10", new ZyfdInfo());
-         map.put("11", new ZyfdInfo());
-         map.put("12", new ZyfdInfo());
-         listInfo.add("13");
-         listInfo.add("14");
-         listInfo.add("15");
-         map.put("13", new ZyfdInfo());
-         map.put("14", new ZyfdInfo());
-         map.put("15", new ZyfdInfo());
+//    	map = new HashMap<String,ZyfdInfo>();
+//    	listInfo = new ArrayList<String>();
+//    	 urls = new ArrayList<String>();
+//         urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
+//         urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
+//         urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
+//         urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
+//         dm.addDownload("10", urls, path+"10/",this);
+//         
+//         urls = new ArrayList<String>();
+//         urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
+//         urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
+//         urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
+//         urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
+//         dm.addDownload("11", urls, path+"11/",this);
+//         urls = new ArrayList<String>();
+//         urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
+//         urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
+//         urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
+//         urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
+//         dm.addDownload("12", urls, path+"12/",this);
+//         urls = new ArrayList<String>();
+//         urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
+//         urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
+//         urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
+//         urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
+//         dm.addDownload("13", urls, path+"13/",this);
+//         
+//         urls = new ArrayList<String>();
+//         urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
+//         urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
+//         urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
+//         urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
+//         dm.addDownload("14", urls, path+"14/",this);
+//         urls = new ArrayList<String>();
+//         urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
+//         urls.add("http://10.10.10.28:90/homeworktutor/56973ecfb6737f1c143fc552.mp3");
+//         urls.add("http://10.10.10.28:90/homeworktutor/56985816a8d85b0ba068b42b.mp4");
+//         dm.addDownload("15", urls, path+"15/",this);
+//         listInfo.add("10");
+//         listInfo.add("11");
+//         listInfo.add("12");
+//         map.put("10", new ZyfdInfo());
+//         map.put("11", new ZyfdInfo());
+//         map.put("12", new ZyfdInfo());
+//         listInfo.add("13");
+//         listInfo.add("14");
+//         listInfo.add("15");
+//         map.put("13", new ZyfdInfo());
+//         map.put("14", new ZyfdInfo());
+//         map.put("15", new ZyfdInfo());
          urls = new ArrayList<String>();
          urls.add("http://10.10.10.28:90/course/get-mongo-data/schoolid/4/file/56973ecfb6737f1c143fc554.json");
          urls.add("http://10.10.10.28:90/homeworktutor/56985819a8d85b0ba068b47e.gif");
@@ -397,6 +404,7 @@ public class MainActivity extends Activity implements MonitorProgress {
 			holder.bar.setProgress(percent);
 			return contentView;
 		}
+
     	class ViewHolder
     	{
     		TextView idTv;
@@ -407,16 +415,12 @@ public class MainActivity extends Activity implements MonitorProgress {
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             return true;
@@ -440,11 +444,12 @@ public class MainActivity extends Activity implements MonitorProgress {
 		public void handleMessage(Message msg) {
 			// TODO Auto-generated method stub
 			int what = msg.what;
+			int arg1 = msg.arg1;
+			int arg2 = msg.arg2;
 			switch (what) {
 			case 0:
 				adapter.notifyDataSetChanged();
 				break;
-
 			default:
 				break;
 			}
@@ -454,16 +459,28 @@ public class MainActivity extends Activity implements MonitorProgress {
 	@Override
 	public void loadingProgress(ObjectInfo info) {
 		// TODO Auto-generated method stub
-//		 info.toString();
-//		Log.e("listview", "progress");
 		 String id = info.getDownloadid();
 		 if(listInfo.contains(id))
 		 {
+			 ZyfdInfo in = map.get(id);
+			 long time = System.currentTimeMillis();			 
+			 long allsize = in.getAllSize();
+			 long dsize2 = info.getDownloadsize();
 			 map.put(id, (ZyfdInfo)info);
-			}
-		 Message msg = handler.obtainMessage();
-		 msg.what = 0;
-		 msg.sendToTarget();
+			 int firstposition = listview.getFirstVisiblePosition();
+			 int position = listInfo.indexOf(id);
+			 int lastposition = listview.getLastVisiblePosition();
+			 if((allsize>=dsize2||time-previousTime>800)&&(position>=firstposition&&position<=lastposition))
+			 {
+				 Message msg = handler.obtainMessage();			
+				 msg.what = 0; 			 
+				 msg.arg1 = firstposition;
+				 msg.arg2 = position;
+				 msg.sendToTarget();
+				 previousTime = time;
+			 }
+		 }
+		
 	}
 
 	@Override
